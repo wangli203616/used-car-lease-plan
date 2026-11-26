@@ -1,0 +1,5 @@
+_check-*.png
+.playwright-mcp/
+node_modules/
+.DS_Store
+Thumbs.db

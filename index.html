@@ -1,0 +1,858 @@
+<meta charset="utf-8">
+<title>二手车以租代购</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F6F7F4; --panel:#FFFFFF; --ink:#151A17; --muted:#5C665F;
+  --line:#DCE1DA; --line-strong:#B9C2BB;
+  --accent:#1F4D3A; --accent-soft:#E6EEE9;
+  --risk:#9E3826; --risk-soft:#F7E8E4;
+  --warn:#7C6316; --warn-soft:#F4EFDF;
+  --ok:#2C6E49;
+  --s1:#8B9A92; --s2:#4E7D68; --s3:#9E3826; --s4:#A8893F; --s5:#1F4D3A;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --maxw:1160px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1211; --panel:#161A18; --ink:#E9ECE8; --muted:#98A29B;
+    --line:#29302C; --line-strong:#3D4741;
+    --accent:#7FBF9F; --accent-soft:#1A2A22;
+    --risk:#E0806A; --risk-soft:#2B1A16;
+    --warn:#D2B163; --warn-soft:#2A2416;
+    --ok:#7FC49B;
+    --s1:#6E7C74; --s2:#5E9A80; --s3:#C05C44; --s4:#C9A758; --s5:#8FD0B0;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1211; --panel:#161A18; --ink:#E9ECE8; --muted:#98A29B;
+  --line:#29302C; --line-strong:#3D4741;
+  --accent:#7FBF9F; --accent-soft:#1A2A22;
+  --risk:#E0806A; --risk-soft:#2B1A16;
+  --warn:#D2B163; --warn-soft:#2A2416;
+  --ok:#7FC49B;
+  --s1:#6E7C74; --s2:#5E9A80; --s3:#C05C44; --s4:#C9A758; --s5:#8FD0B0;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:15px; line-height:1.78;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 80px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw); margin:0 auto}
+p{margin:0 0 14px; max-width:70ch}
+strong{font-weight:600}
+a{color:var(--accent); text-underline-offset:3px}
+
+/* ---------- header ---------- */
+header.top{padding:44px 0 30px; border-bottom:1px solid var(--line-strong)}
+.eyebrow{font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:18px}
+h1{font-size:clamp(30px,5vw,48px); line-height:1.12; letter-spacing:-.025em; font-weight:600; margin:0 0 14px; text-wrap:balance}
+.lede{font-size:16.5px; line-height:1.72; color:var(--muted); max-width:64ch; margin:0}
+
+/* ---------- layout ---------- */
+.layout{display:grid; grid-template-columns:196px minmax(0,1fr); gap:52px; align-items:start; margin-top:8px}
+nav.toc{position:sticky; top:22px; padding-top:30px; font-size:12.5px; line-height:1.5}
+nav.toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px}
+nav.toc a{display:flex; gap:9px; padding:4px 0; color:var(--muted); text-decoration:none; border-left:2px solid transparent; padding-left:10px; margin-left:-12px}
+nav.toc a:hover{color:var(--ink); border-left-color:var(--line-strong)}
+nav.toc .n{font-family:var(--mono); font-size:10.5px; color:var(--line-strong); padding-top:2px}
+main{padding-top:30px; min-width:0}
+
+/* ---------- sections ---------- */
+section{padding-top:14px; margin-bottom:52px}
+h2{font-size:22px; line-height:1.35; font-weight:600; letter-spacing:-.01em; margin:0 0 6px; scroll-margin-top:24px; text-wrap:balance; display:flex; gap:12px; align-items:baseline}
+h2 .num{font-family:var(--mono); font-size:11px; color:var(--muted); font-weight:400; letter-spacing:.08em; flex:none; padding-top:3px}
+.rule{height:1px; background:var(--line-strong); margin:0 0 22px}
+h3{font-size:15.5px; font-weight:600; margin:30px 0 10px}
+h4{font-size:13px; font-weight:600; margin:0 0 6px; letter-spacing:.01em}
+
+/* ---------- verdict ---------- */
+.verdict{border-left:3px solid var(--accent); padding:4px 0 4px 20px; margin:26px 0 34px; display:flex; flex-direction:column; gap:20px}
+.verdict-item h3{margin:0 0 5px; font-size:15px; color:var(--ink)}
+.verdict-item p{margin:0; font-size:14.5px; color:var(--muted); line-height:1.7}
+
+/* ---------- tiles ---------- */
+.tiles{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin:34px 0 10px}
+.tile{background:var(--panel); padding:18px 16px 16px}
+.tile .v{font-family:var(--mono); font-size:clamp(20px,2.6vw,27px); font-weight:500; letter-spacing:-.03em; line-height:1.15; font-variant-numeric:tabular-nums}
+.tile .k{font-size:11.5px; color:var(--muted); margin-top:7px; line-height:1.45}
+.tile.neg .v{color:var(--risk)}
+.tile.pos .v{color:var(--accent)}
+
+/* ---------- text blocks ---------- */
+.callout{background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--risk); padding:16px 20px; margin:22px 0; font-size:14px; line-height:1.7}
+.callout.soft{border-left-color:var(--accent)}
+.callout p:last-child{margin-bottom:0}
+.callout .label{font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--risk); display:block; margin-bottom:5px}
+.callout.soft .label{color:var(--accent)}
+
+ul.plain{margin:0 0 16px; padding-left:18px; max-width:70ch}
+ul.plain li{margin-bottom:7px}
+ol.steps{margin:0 0 16px; padding-left:20px; max-width:70ch}
+ol.steps li{margin-bottom:9px}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto; margin:20px 0 8px; border:1px solid var(--line)}
+table{width:100%; border-collapse:collapse; font-size:13px; line-height:1.55; background:var(--panel)}
+th{text-align:left; font-weight:500; color:var(--muted); font-size:11.5px; letter-spacing:.03em; padding:10px 12px; border-bottom:1px solid var(--line-strong); white-space:nowrap; background:var(--panel)}
+td{padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.num,th.num{font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+td.wk{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--muted); font-size:12px}
+td.neg{color:var(--risk); font-weight:500}
+td.pos{color:var(--accent); font-weight:500}
+.cap{font-size:11.5px; color:var(--muted); margin:6px 0 20px; line-height:1.55; max-width:70ch}
+
+/* ---------- flow diagram ---------- */
+.flow{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:stretch; gap:0; margin:26px 0 8px}
+.node{background:var(--panel); border:1px solid var(--line-strong); padding:16px 14px}
+.node .who{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px}
+.node .what{font-size:13.5px; font-weight:600; margin-bottom:4px}
+.node .how{font-size:12px; color:var(--muted); line-height:1.5}
+.arrow{display:flex; align-items:center; justify-content:center; padding:0 10px; color:var(--muted); font-family:var(--mono); font-size:16px}
+
+/* ---------- stacked bar ---------- */
+.stackbar{display:flex; height:34px; width:100%; overflow:hidden; border:1px solid var(--line-strong); margin:24px 0 0}
+.stackbar span{display:block; height:100%}
+.legend{display:grid; grid-template-columns:repeat(3,1fr); gap:10px 22px; margin:16px 0 6px}
+.legend div{display:flex; gap:9px; align-items:flex-start; font-size:12.5px; line-height:1.45}
+.legend i{width:9px; height:9px; margin-top:5px; flex:none; display:block}
+.legend b{font-family:var(--mono); font-weight:500; font-variant-numeric:tabular-nums}
+
+/* ---------- scenario bars ---------- */
+.scen{margin:22px 0 8px; display:flex; flex-direction:column; gap:10px; max-width:640px}
+.scen-row{display:grid; grid-template-columns:150px 1fr 76px; gap:12px; align-items:center; font-size:12.5px}
+.scen-track{height:14px; background:var(--accent-soft); position:relative}
+.scen-fill{position:absolute; left:0; top:0; bottom:0; background:var(--accent)}
+.scen-fill.neg{background:var(--risk)}
+.scen-val{font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right; font-size:12px}
+
+/* ---------- two-col ---------- */
+.duo{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:20px 0}
+.duo > div{min-width:0}
+.duo h4{margin-bottom:8px}
+.duo .sub{font-size:12px; color:var(--muted); margin-bottom:8px; font-family:var(--mono); letter-spacing:.05em}
+
+/* ---------- phase ---------- */
+.phase{border-top:1px solid var(--line); padding:18px 0; display:grid; grid-template-columns:120px 1fr; gap:20px}
+.phase:last-child{border-bottom:1px solid var(--line)}
+.phase .when{font-family:var(--mono); font-size:11.5px; color:var(--muted); letter-spacing:.04em; padding-top:3px}
+.phase .body{min-width:0}
+.phase .body h4{margin-bottom:6px}
+.phase .body p{font-size:13.5px; margin-bottom:6px}
+.phase .body p:last-child{margin-bottom:0}
+
+/* ---------- gate table ---------- */
+.gate td:first-child{font-weight:500}
+
+footer{margin-top:60px; padding-top:22px; border-top:1px solid var(--line-strong); font-size:12px; color:var(--muted); line-height:1.7}
+footer a{color:var(--muted)}
+.srcs{display:grid; grid-template-columns:1fr 1fr; gap:4px 24px; margin-top:14px}
+.srcs div{min-width:0; overflow-wrap:anywhere}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr; gap:0}
+  nav.toc{display:none}
+  main{padding-top:20px}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .duo{grid-template-columns:1fr}
+  .legend{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr; gap:0}
+  .arrow{padding:8px 0; transform:rotate(90deg)}
+  .phase{grid-template-columns:1fr; gap:4px}
+  .scen-row{grid-template-columns:110px 1fr 64px; gap:8px}
+  .srcs{grid-template-columns:1fr}
+}
+@media (max-width:420px){
+  .tiles{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">投研备忘 · 2026 年 11 月 · 四川</div>
+  <h1>二手车以租代购</h1>
+  <p class="lede">朋友给的结构是：资金方出钱把车买到公司名下，租给客户 36 到 48 期，客户年化 30%，资金方年化 12 到 15%，赚中间差价。这份备忘把这句话拆成现金流、税和法律责任，看它到底成不成立。</p>
+</header>
+
+<div class="layout">
+
+<nav class="toc" aria-label="目录">
+  <ol>
+    <li><a href="#s1"><span class="n">01</span>交易结构</a></li>
+    <li><a href="#s2"><span class="n">02</span>行业基本面</a></li>
+    <li><a href="#s3"><span class="n">03</span>税务分岔</a></li>
+    <li><a href="#s4"><span class="n">04</span>单台经济模型</a></li>
+    <li><a href="#s5"><span class="n">05</span>油车与电车</a></li>
+    <li><a href="#s6"><span class="n">06</span>四川市场</a></li>
+    <li><a href="#s7"><span class="n">07</span>资金端</a></li>
+    <li><a href="#s8"><span class="n">08</span>风控与收车</a></li>
+    <li><a href="#s9"><span class="n">09</span>合规清单</a></li>
+    <li><a href="#s10"><span class="n">10</span>落地方案</a></li>
+    <li><a href="#s11"><span class="n">11</span>财务预测</a></li>
+    <li><a href="#s12"><span class="n">12</span>风险与止损</a></li>
+    <li><a href="#s13"><span class="n">13</span>决策建议</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<div class="verdict">
+  <div class="verdict-item">
+    <h3>利差没有 16.5%，只有 3.1%</h3>
+    <p>10 万元车、20% 首付、36 期、对客 30%、资金 13.5%：单台 3 年净利 9,373 元，占车价 9.4%，折年 3.1%。客户多付的 50,796 元里，43.6% 是资金方的利息，25.6% 是运营成本，公司只剩 18.5%。</p>
+  </div>
+  <div class="verdict-item">
+    <h3>税务结构选错，同一台车从赚 9,373 变成亏 648</h3>
+    <p>「融资租赁直租」按 13% 缴增值税，从个人或二手车商收车几乎拿不到进项；「实际税负超 3% 即征即退」已于 2025 年 11 月 1 日废止。改走「二手车经销 + 分期收款 + 所有权保留」，增值税 0.5%，单台税负从 14,301 元降到 750 元。</p>
+  </div>
+  <div class="verdict-item">
+    <h3>「车在公司名下就能随时收车」是误解</h3>
+    <p>2024 到 2025 年杭州、兰州、上海等地判例：融资租赁公司夜间拖车被认定侵权，返还原物并按每天 250 元赔偿；有合同授权也不免责，情节严重的按盗窃、寻衅滋事追刑责。合规路径只有协商、公证、诉讼保全、强制执行。</p>
+  </div>
+</div>
+
+<div class="tiles">
+  <div class="tile"><div class="v">3.1%</div><div class="k">资产年化净回报<br>不是 16.5%</div></div>
+  <div class="tile pos"><div class="v">9,373</div><div class="k">单台 3 年净利<br>车价 10 万、36 期</div></div>
+  <div class="tile"><div class="v">43.6%</div><div class="k">客户溢价中<br>付给资金方的比例</div></div>
+  <div class="tile neg"><div class="v">−648</div><div class="k">直租结构单台净利<br>税改之后</div></div>
+</div>
+
+<!-- ============ 01 ============ -->
+<section id="s1">
+  <h2><span class="num">01</span>交易结构：三种外壳，三种命运</h2>
+  <div class="rule"></div>
+  <p>同样一笔钱、同一台车，装进不同的法律外壳，税负、所有权、收车权和牌照要求完全不同。朋友说的「买到公司名下再租出去」，最常见的三种做法是这样：</p>
+
+  <div class="flow">
+    <div class="node">
+      <div class="who">资金方</div>
+      <div class="what">出钱</div>
+      <div class="how">垫付车价，按年化 12–15% 收本息，要求保证金、回购或差额补足</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node">
+      <div class="who">我方公司</div>
+      <div class="what">持车、收租</div>
+      <div class="how">车辆登记在公司名下，与客户签租赁或分期合同，承担全部信用风险</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node">
+      <div class="who">客户</div>
+      <div class="what">使用、付款</div>
+      <div class="how">付首付和月供，36–48 期，期满过户；违约则车被收回</div>
+    </div>
+  </div>
+  <p class="cap">这个结构里，资金方拿的是固定收益，公司拿的是剩余收益，也承担全部剩余风险。换句话说，公司是劣后级。</p>
+
+  <h3>三种外壳的对比</h3>
+  <div class="scroll">
+  <table>
+    <thead>
+      <tr><th>维度</th><th>融资租赁直租</th><th>经销 + 分期 + 所有权保留</th><th>售后回租</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>法律依据</td><td>民法典第 735 条、融资租赁司法解释</td><td>民法典第 634、641–643 条（分期买卖、所有权保留）</td><td>融资租赁司法解释第 2 条</td></tr>
+      <tr><td>车辆登记</td><td>登记在公司名下，租期届满过户</td><td>先过户到公司（经销收购），款清再过户给客户</td><td>登记在车主名下，公司仅有抵押权</td></tr>
+      <tr><td>所有权对抗第三人</td><td>需中登网登记，未登记不得对抗善意第三人（第 745 条）</td><td>所有权保留需在中登网登记，否则不得对抗善意买受人</td><td>依赖抵押登记，对抗力较弱</td></tr>
+      <tr><td>增值税</td><td class="neg">13%，仅能差额扣除借款利息</td><td class="pos">0.5% 征收率（至 2027 年底）</td><td>按贷款服务 6%</td></tr>
+      <tr><td>牌照/备案</td><td>融资租赁公司，地方金融组织，省级备案</td><td>二手车经销备案，商务部门，免费</td><td>同融资租赁</td></tr>
+      <tr><td>违约后取回车辆</td><td>解除合同、取回租赁物，但不得自力拖车</td><td>取回权（第 642 条），同样不得自力拖车</td><td>实现抵押权，须走程序</td></tr>
+      <tr><td>消费者保护法适用</td><td>通常不适用</td><td class="neg">适用，事故车/调表可能触发退一赔三</td><td>通常不适用</td></tr>
+      <tr><td>主要风险</td><td>税负压垮利润；被认定名为租赁实为借贷</td><td>被认定变相放贷；车辆瑕疵担保责任</td><td>监管明确禁止以回租做汽车消费贷</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">售后回租在江苏等地细则中被明确限制：「不得以融资租赁名义从事汽车消费贷款」。四川虽无专项细则，但监管口径趋同，不建议作为主结构。</p>
+
+  <div class="callout soft">
+    <span class="label">关键判断</span>
+    <p>你想要的「公司持有车辆所有权、客户还不起就收车」，在直租和经销分期里都能实现。两者的差别不在法律效果，而在税：直租多付 13.5 个百分点的增值税，经销分期只付 0.5%。在毛利只有 9% 的生意里，这个差别就是生与死。</p>
+  </div>
+</section>
+
+<!-- ============ 02 ============ -->
+<section id="s2">
+  <h2><span class="num">02</span>行业基本面：规模在涨，利润在塌</h2>
+  <div class="rule"></div>
+  <p>中国二手车行业 2025 年首次突破 2,000 万辆，但这是一门「量增价跌」的生意。车商大面积亏损，金融端却在扩张——这恰好说明，钱不好赚的地方，融资需求才旺。</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>指标</th><th class="num">2024</th><th class="num">2025</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>二手车交易量</td><td class="num">1,961 万辆</td><td class="num">2,011 万辆</td><td>同比 +2.5%，首破 2,000 万</td></tr>
+      <tr><td>交易金额</td><td class="num">1.29 万亿元</td><td class="num">1.29 万亿元</td><td>金额没涨，全靠量撑</td></tr>
+      <tr><td>成交均价</td><td class="num">6.55 万元</td><td class="num">6.41 万元</td><td>年内从 6.67 万跌到 6.16 万</td></tr>
+      <tr><td>新能源二手车</td><td class="num">113 万辆</td><td class="num">160 万辆</td><td>占比仅 7.9%，增速超 40%</td></tr>
+      <tr><td>平均车龄</td><td class="num">7.9 年</td><td class="num">8.2 年</td><td>燃油 8.6 年、新能源 3.4 年</td></tr>
+      <tr><td>车商盈利面</td><td class="num">—</td><td class="num neg">26.4%</td><td>73.6% 亏损，平均利润率约 4%</td></tr>
+      <tr><td>库存周期</td><td class="num">—</td><td class="num">43–45 天</td><td>超三成企业周转超 30 天</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">数据来源：中国汽车流通协会、乘联分会、天天拍车、第一财经（2025–2026）。</p>
+
+  <h3>金融端：渗透率过半，融资租赁在抢二手车</h3>
+  <p>二手车金融渗透率从 2018 年的 26% 升到 2026 年预计的 52%。头部融资租赁公司的二手车投放占比，从 2023 年的 19.8% 升到 2025 年的 37.8%，增速远高于新车。这是个确定性的增量市场。</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>玩家</th><th>模式</th><th class="num">2025 关键数据</th><th>现状</th></tr></thead>
+    <tbody>
+      <tr><td>易鑫</td><td>助贷 + 直租，二手车为主</td><td class="num">84.4 万笔 / 751 亿</td><td>二手车占 63.6%，90+ 逾期 1.89%，融资成本 3.7%</td></tr>
+      <tr><td>平安租赁</td><td>商租，汽车占资产 41%</td><td class="num">余额 2,761 亿</td><td>2024 年减值 17.7 亿，同比 +86%</td></tr>
+      <tr><td>弹个车（大搜车）</td><td>一成首付以租代购</td><td class="num">营收 6.77 亿</td><td>2022 年剥离 C 端，三年累亏 4.38 亿，2026 年美股首日跌 46.7%</td></tr>
+      <tr><td>灿谷</td><td>车贷助贷</td><td class="num">净亏 6.22 亿</td><td>已退出车贷，转矿机与算力</td></tr>
+      <tr><td>优信</td><td>线下大卖场 + 分期</td><td class="num">Q4 销量 2.16 万台</td><td>毛利率 6.7%，仍亏损</td></tr>
+      <tr><td>花生好车</td><td>直营门店 + 直租</td><td class="num">300+ 门店</td><td>2026 年初融资 6.5 亿，仍在扩张</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">数据来源：易鑫 2025 年报、平安租赁债券募集说明书、大搜车/灿谷/优信财报、公开报道（2026）。</p>
+
+  <div class="callout soft">
+    <span class="label">一个反常识的事实</span>
+    <p>头部玩家赚钱，靠的不是 30% 的高利率，而是 3.7% 的资金成本和 1.89% 的逾期率。易鑫的二手车贷款平均定价远低于 30%。你要用 13.5% 的钱、做 30% 定价的客群，等于同时承担了最高的资金成本和最差的信用风险——这是行业里最难受的位置。</p>
+  </div>
+
+  <p>行业的分层很清楚：厂商金融不良率 0.6–1.1%，银行 1.2–1.8%，融资租赁 2.5–4.0%，下沉中小机构实操 5–10%。你瞄准的「征信瑕疵、无社保流水、网约车司机」客群，处在最下面一层。</p>
+</section>
+
+<!-- ============ 03 ============ -->
+<section id="s3">
+  <h2><span class="num">03</span>税务：决定生死的分岔</h2>
+  <div class="rule"></div>
+  <p>这是整份备忘里最重要的一节，也是大多数人算漏的一笔。</p>
+
+  <h3>2025 年 11 月 1 日，规则变了</h3>
+  <p>过去十年，融资租赁公司做有形动产直租，有一条保命条款：增值税实际税负超过 3% 的部分即征即退（财税〔2016〕36 号附件 3）。2025 年 10 月 17 日，财政部、海关总署、税务总局发布 2025 年第 10 号公告，<strong>自 2025 年 11 月 1 日起废止该条款</strong>。直租业务恢复按 13% 正常缴税。</p>
+
+  <p>问题在于二手车。直租的增值税销售额是「全部租金减去借款利息」，本金部分也在税基里；而进货端，从个人收车没有发票，从二手车经销企业收车只有 0.5% 的进项。于是 13% 的销项几乎没有抵扣。</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>单台 10 万元车、36 期、对客 30%</th><th class="num">融资租赁直租</th><th class="num">经销 + 分期</th></tr></thead>
+    <tbody>
+      <tr><td>增值税税基</td><td class="num">128,629</td><td class="num">150,796</td></tr>
+      <tr><td>税率 / 征收率</td><td class="num">13%</td><td class="num">0.5%</td></tr>
+      <tr><td>销项税</td><td class="num">14,798</td><td class="num">750</td></tr>
+      <tr><td>进项税（采购 0.5%）</td><td class="num">497</td><td class="num">—</td></tr>
+      <tr><td><strong>应缴增值税</strong></td><td class="num neg">14,301</td><td class="num pos">750</td></tr>
+      <tr><td>附加税（12%）</td><td class="num neg">1,716</td><td class="num">90</td></tr>
+      <tr><td>印花税</td><td class="num">6</td><td class="num">45</td></tr>
+      <tr><td><strong>单台 3 年净利</strong></td><td class="num neg">−648</td><td class="num pos">9,373</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">测算假设：车价 10 万、对客成交价 10.6 万、首付 20%、36 期、对客年化 30%、资金方全额垫付、年化 13.5%、3 年累计违约 8%、运营成本占车价 13%。</p>
+
+  <div class="callout">
+    <span class="label">结论</span>
+    <p>在二手车场景里，「融资租赁直租」这个外壳的税负约为车价的 14.3%。而整台车的 3 年净利只有车价的 9.4%。<strong>税比利润还多。</strong>不改结构，这门生意从第一天就是负的。</p>
+  </div>
+
+  <h3>「经销 + 分期 + 所有权保留」为什么能成立</h3>
+  <p>公司先把车收购过户到自己名下（这是经销），再以分期付款方式卖给客户，约定价款付清前所有权保留在公司。税务上这是「销售货物」，不是「提供租赁服务」，因此适用二手车经销 0.5% 征收率（财政部 税务总局公告 2023 年第 63 号，执行至 2027 年 12 月 31 日）。</p>
+  <p>法律上，民法典第 641 条承认所有权保留，第 642 条给了出卖人在买受人违约时的取回权。你想要的「车是我的、违约能收」照样成立。</p>
+
+  <div class="callout soft">
+    <span class="label">但这个优势有保质期</span>
+    <p>0.5% 征收率 2027 年底到期。如果 2028 年不再延续，税负会跳回 3% 减按 2% 或更高。做三年以上的财务模型时，必须把这一项作为敏感性变量，不能假设永久有效。</p>
+  </div>
+
+  <h3>还有一个容易被忽略的定性风险</h3>
+  <p>如果合同被法院认定为「名为买卖、实为借贷」，或者被税务认定为「名为经销、实为放贷」，0.5% 的适用就会被推翻，按借贷重新定性。参考海口洪某案：合同约定年利率 23.42%，因车辆未实际过户、买卖合同无成交价，一、二审均认定为民间借贷，利率从 23.42% 降到 14.2%。</p>
+  <p>避开这一点，靠三件事：车辆真实过户、合同写明成交价与总价款、公司真实承担车辆瑕疵与整备责任。任何一条虚了，外壳就会被击穿。</p>
+</section>
+
+<!-- ============ 04 ============ -->
+<section id="s4">
+  <h2><span class="num">04</span>单台经济模型：钱到底去哪了</h2>
+  <div class="rule"></div>
+  <p>把一台车从采购到期满的所有现金流摊开，答案会比「30% 减 13.5%」刺眼得多。</p>
+
+  <h3>基准参数</h3>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>项目</th><th class="num">数值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>采购车价</td><td class="num">100,000</td><td>3–5 年车龄、8–15 万区间的主流车型</td></tr>
+      <tr><td>对客成交价</td><td class="num">106,000</td><td>含 6% 整备与合理毛利</td></tr>
+      <tr><td>首付比例</td><td class="num">20%</td><td>首付 21,200</td></tr>
+      <tr><td>分期期数</td><td class="num">36 期</td><td>月供 3,600</td></tr>
+      <tr><td>对客年化</td><td class="num">30%</td><td>名义年利率，月 2.5%</td></tr>
+      <tr><td>资金方成本</td><td class="num">13.5%</td><td>全额垫付车价，月供 3,394</td></tr>
+      <tr><td>客户 3 年总付出</td><td class="num">150,796</td><td>首付 + 36 期租金</td></tr>
+      <tr><td>资金方 3 年本息</td><td class="num">122,167</td><td>其中利息 22,167</td></tr>
+      <tr><td>运营成本</td><td class="num">13,000</td><td>获客、人力、门店、系统、法务，占车价 13%</td></tr>
+      <tr><td>预期违约损失</td><td class="num">1,716</td><td>3 年累计违约 8%，含 4 个月空转与 20% 收不回</td></tr>
+      <tr><td><strong>单台 3 年净利</strong></td><td class="num pos">9,373</td><td>占车价 9.4%，折年 3.1%</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>客户多付的 50,796 元，去哪了</h3>
+  <div class="stackbar" role="img" aria-label="客户溢价分配：资金方利息 43.6%，运营成本 25.6%，公司净利 18.5%，企业所得税 7.3%，预期违约 3.4%，增值税及附加 1.7%">
+    <span style="width:43.6%;background:var(--s1)"></span>
+    <span style="width:25.6%;background:var(--s2)"></span>
+    <span style="width:7.3%;background:var(--s4)"></span>
+    <span style="width:3.4%;background:var(--s3)"></span>
+    <span style="width:1.7%;background:var(--s4);opacity:.75"></span>
+    <span style="width:18.5%;background:var(--s5)"></span>
+  </div>
+  <div class="legend">
+    <div><i style="background:var(--s1)"></i><span>资金方利息 <b>22,167</b> · 43.6%</span></div>
+    <div><i style="background:var(--s2)"></i><span>运营成本 <b>13,000</b> · 25.6%</span></div>
+    <div><i style="background:var(--s5)"></i><span>公司净利 <b>9,373</b> · 18.5%</span></div>
+    <div><i style="background:var(--s4)"></i><span>企业所得税 <b>3,700</b> · 7.3%</span></div>
+    <div><i style="background:var(--s3)"></i><span>预期违约损失 <b>1,716</b> · 3.4%</span></div>
+    <div><i style="background:var(--s4);opacity:.75"></i><span>增值税及附加 <b>840</b> · 1.7%</span></div>
+  </div>
+  <p class="cap">「客户多付」指客户 3 年总付出 150,796 元，减去车辆采购成本 100,000 元。</p>
+
+  <div class="callout soft">
+    <span class="label">重新理解这门生意</span>
+    <p>在这个结构里，资金方按 13.5% 拿走 100 万车价的本息，客户按 30% 付 8.48 万的分期。两笔月供几乎抵消：3,600 对 3,394，每月只多 206 元。<strong>公司的利润本质上来自那笔 21,200 元的首付，减去三年运营成本。</strong>它不是一门「利差生意」，是一门「首付捕获 + 成本控制」的生意。</p>
+  </div>
+
+  <h3>敏感性：哪个变量最要命</h3>
+  <p>以基准情形为准，每次只动一个变量，看单台净利怎么变（单位：元）。</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>变量</th><th class="num">悲观</th><th class="num">基准</th><th class="num">乐观</th><th>结论</th></tr></thead>
+    <tbody>
+      <tr><td>资金成本</td><td class="num neg">5,086（18%）</td><td class="num">9,373（13.5%）</td><td class="num pos">16,439（9%）</td><td>每降 1 个点，单台多赚约 1,900 元</td></tr>
+      <tr><td>对客利率</td><td class="num neg">3,901（24%）</td><td class="num">9,373（30%）</td><td class="num pos">18,122（36%）</td><td>每加 1 个点，单台多赚约 2,400 元</td></tr>
+      <tr><td>运营成本占车价</td><td class="num neg">5,617（20%）</td><td class="num">9,373（13%）</td><td class="num pos">16,117（6%）</td><td>降 5 个点，相当于利率加 2 个点</td></tr>
+      <tr><td>3 年累计违约</td><td class="num">8,053（25%）</td><td class="num">9,373（8%）</td><td class="num">10,550（4%）</td><td>敏感度最低，因为首付厚</td></tr>
+      <tr><td>首付比例</td><td class="num neg">14,447（10%）</td><td class="num">9,373（20%）</td><td class="num">7,286（30%）</td><td>首付越低越赚，但风险越高</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">注：违约率敏感度低，是因为 20% 首付加 6% 加价让客户在第 14 个月时已有约 40% 的车辆权益，收车处置大多能覆盖资金方余额。这个结论成立的前提是「能收到车、能按市价卖掉」，见第 8 节。</p>
+
+  <h3>合规区间的残酷现实</h3>
+  <p>如果把对客利率压到司法和监管都挑不出毛病的 24%，同时把首付提到 30% 控制风险，会发生什么：</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>产品</th><th class="num">月供</th><th class="num">单台净利（资金 13.5%）</th><th class="num">单台净利（资金 8%）</th></tr></thead>
+    <tbody>
+      <tr><td>20% 首付 / 36 期 / 30%</td><td class="num">3,600</td><td class="num pos">9,373</td><td class="num pos">16,241</td></tr>
+      <tr><td>30% 首付 / 36 期 / 24%</td><td class="num">2,911</td><td class="num neg">−408</td><td class="num pos">6,562</td></tr>
+      <tr><td>30% 首付 / 36 期 / 18%</td><td class="num">2,683</td><td class="num neg">−8,188</td><td class="num pos">727</td></tr>
+      <tr><td>30% 首付 / 48 期 / 24%</td><td class="num">2,419</td><td class="num pos">1,670</td><td class="num pos">10,947</td></tr>
+      <tr><td>30% 首付 / 24 期 / 24%</td><td class="num">3,923</td><td class="num neg">−2,725</td><td class="num pos">2,509</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">同样的模型、同样的违约率。差别只在对客定价、期限和资金成本。</p>
+
+  <div class="callout">
+    <span class="label">这道题的真实答案</span>
+    <p>在 13.5% 的资金成本下，只有「20% 首付 + 30% 对客利率 + 36 期」这一组参数能赚钱。而这组参数，恰好是监管最不喜欢、司法最容易击穿、客户最容易违约的那一组。<strong>这不是巧合，是这个生意的结构性矛盾。</strong>要跳出这个矛盾，唯一的办法是把资金成本压到 10% 以下，然后在对客 24%、首付 30% 的合规区间里赚 6,000 到 7,000 元一台。</p>
+  </div>
+
+  <h3>提前还款会吃掉多少</h3>
+  <p>高利率产品必然伴随高提前还款率——客户一旦周转过来，或者找到更便宜的钱，就会提前结清。按 25% 的客户在第 18 个月提前结清、收 3% 违约金测算，单台净利从 9,373 降到 9,304；提前率到 50% 时降到 7,516。影响可控，但要在定价里预留。</p>
+</section>
+
+<!-- ============ 05 ============ -->
+<section id="s5">
+  <h2><span class="num">05</span>油车与电车：不是同一门生意</h2>
+  <div class="rule"></div>
+  <p>很多人以为新能源残值低只是「多折一点」，实际上它改变的是产品的期限结构和风控逻辑。</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>维度</th><th>燃油车</th><th>新能源</th></tr></thead>
+    <tbody>
+      <tr><td>3 年保值率（2025Q3）</td><td class="num">45.7%</td><td class="num">约 43–44.8%</td></tr>
+      <tr><td>2026 上半年保值率</td><td class="num">46.07%</td><td class="num">44.80%</td></tr>
+      <tr><td>保值率分化</td><td>车型间差异 10–15 个点</td><td class="neg">头部 61.4%（Model 3）到尾部 24%（威马）</td></tr>
+      <tr><td>折旧可预测性</td><td class="pos">高，评估体系成熟</td><td class="neg">低，技术迭代与降价随时重估</td></tr>
+      <tr><td>电池健康度检测</td><td>不涉及</td><td class="neg">全国无统一国标，车商只能压价避险</td></tr>
+      <tr><td>质保随车</td><td>常规质保随车</td><td>三电基础质保随车（8 年/12 万公里）</td></tr>
+      <tr><td>终身质保</td><td>不涉及</td><td class="neg">限首任非营运车主，过户即失效</td></tr>
+      <tr><td>换电/BaaS 车型</td><td>不涉及</td><td class="neg">电池产权不属车主，残值更低，过户复杂</td></tr>
+      <tr><td>新车价格冲击</td><td>价格战传导</td><td class="neg">2025 年 148 款降价，新能源平均降 2.1 万</td></tr>
+      <tr><td>2026 购置税</td><td>二手车过户不再征</td><td>新车减半（5%，上限 1.5 万）；二手车过户仍免</td></tr>
+      <tr><td>处置流通性</td><td class="pos">好，全国跨区调拨</td><td>一般，跨区接受度低</td></tr>
+      <tr><td>适合的金融产品</td><td class="pos">C 端 36 期</td><td>B 端短租 / 网约车 12–24 期</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <span class="label">新能源的三个坑</span>
+    <p><strong>一、电池健康度不可验证。</strong>没有国标检测方法，车商收车只能一刀切压价，买家也不敢接。你以为的「8 万残值」，拍卖场上可能只有 5 万。<br>
+    <strong>二、终身质保不过户。</strong>「终身质保」限首任非营运车主，一过户就降为基础三电质保（8 年/12 万公里），而且正常衰减不算故障、不免费换。二手车主拿到的权益比想象中少得多。<br>
+    <strong>三、电池不属车主。</strong>蔚来 BaaS 等换电车型，电池产权在公司，二手车残值只能按「车身」算，还要处理电池租约的转移。</p>
+  </div>
+
+  <h3>营运性质是残值大杀器</h3>
+  <p>如果客户拿车跑网约车，车辆性质变为营运：同车况营运车的评估价约为非营运的 50%–70%，办齐「双证」的网约车再低 30%–50%。而且报废年限自出厂日起算、营转非不重置——小型出租客运 8 年，网约车 60 万公里。</p>
+  <p>这意味着：<strong>同一台车，做 C 端自用和做网约车，是两个完全不同的资产。</strong>合同里必须明确约定使用性质，并约定改变用途的违约责任；GPS 与里程监控要能识别营运行为。</p>
+
+  <h3>结论</h3>
+  <ul class="plain">
+    <li><strong>油车做 C 端长租。</strong>3–6 年车龄、8–15 万、轩逸/朗逸/卡罗拉/思域/CR-V/哈弗 H6 这类流通性好的车型，36 期，残值可预测，处置快。</li>
+    <li><strong>电车做 B 端短租或网约车。</strong>12–24 期，绑定平台流水监控，不做 36 期以上的 C 端长租。</li>
+    <li><strong>不做冷门电车、不做营运性质不明的车、不做 5 年以上车龄的电车。</strong>这三类在处置端会直接砸在手里。</li>
+  </ul>
+</section>
+
+<!-- ============ 06 ============ -->
+<section id="s6">
+  <h2><span class="num">06</span>四川市场：车源不缺，缺的是价差</h2>
+  <div class="rule"></div>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>指标</th><th class="num">数值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>成都汽车保有量</td><td class="num">超 800 万辆</td><td>全国前列，车源池深</td></tr>
+      <tr><td>成都 2025 二手车交易</td><td class="num">86.8 万辆</td><td>零售额 159 亿元，同比 +67.8%</td></tr>
+      <tr><td>宏盟二手车市场</td><td class="num">20 万台</td><td>连续 3 年全国百强市场第一，约七成客户来自外地</td></tr>
+      <tr><td>双流区</td><td class="num">33.3 万辆</td><td>6 个市场占全市经营主体约 40%，交易额 470 亿</td></tr>
+      <tr><td>限迁政策</td><td class="num">已取消</td><td>2022 年取消国五小型非营运二手车限迁</td></tr>
+      <tr><td>跨省通办</td><td class="num">已实施</td><td>2026 年 6 月起凭身份证一站式过户</td></tr>
+      <tr><td>试点资格</td><td class="num">入选</td><td>2026 年 6 月入选全国汽车流通消费改革试点（40 城）</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">数据来源：国新办发布会、四川省政府网站转载、界面新闻、澎湃新闻（2026）。</p>
+
+  <div class="duo">
+    <div>
+      <h4>优势</h4>
+      <p class="sub">为什么在成都做</p>
+      <ul class="plain">
+        <li>车源充足，宏盟是全国最大的车源集散地之一，收车半径短</li>
+        <li>跨区流通强，七成客户来自外地，处置时全国调拨方便</li>
+        <li>试点城市，登记、过户、税收征管相对便利</li>
+        <li>人工与门店成本低于一线城市，运营成本占比可控</li>
+      </ul>
+    </div>
+    <div>
+      <h4>劣势</h4>
+      <p class="sub">为什么在成都难</p>
+      <ul class="plain">
+        <li>车商密集、价格战激烈，2025 年 73.6% 车商亏损，收车价被抬高</li>
+        <li>外地车商来蓉扫货，好车源价格没有优势</li>
+        <li>本地已有一批以租代购和助贷机构，获客成本被推高</li>
+        <li>四川没有融资租赁专项细则，监管口径需逐案沟通</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>成都的正确打法不是「比谁收车便宜」，而是<strong>比谁处置快、比谁资金便宜</strong>。车源在宏盟、双流是公开市场，价差很薄；真正的壁垒在贷后和处置——能不能在 30 天内把收回来的车变成现金。</p>
+</section>
+
+<!-- ============ 07 ============ -->
+<section id="s7">
+  <h2><span class="num">07</span>资金端：12–15% 贵不贵</h2>
+  <div class="rule"></div>
+  <p>结论先说：<strong>偏高，但不是离谱；如果有抵押、回购和保证金，就贵了。</strong></p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>资金来源</th><th class="num">年化成本</th><th>门槛与条件</th></tr></thead>
+    <tbody>
+      <tr><td>银行流贷 / 授信</td><td class="num pos">3–6%</td><td>主体评级、抵押物、股东背景；民营新公司很难拿到</td></tr>
+      <tr><td>银行助贷</td><td class="num">4–6%</td><td>2025 年 10 月助贷新规：名单制、综合成本穿透、红线 24%</td></tr>
+      <tr><td>融资租赁 ABS / ABN</td><td class="num pos">1.99%（AAA 优先）</td><td>主体 AA 以上、资产池分散、优先/次级分层、差额支付承诺</td></tr>
+      <tr><td>券商资管</td><td class="num">6–9%</td><td>需底层资产清晰、增信完整</td></tr>
+      <tr><td>同业拆借</td><td class="num">5–8%</td><td>需融资租赁资质与同业授信</td></tr>
+      <tr><td>信托</td><td class="num">8–12%</td><td>车抵贷信托对客月 1.1–1.2%，折年 13–14%</td></tr>
+      <tr><td>股东借款</td><td class="num">4–8%</td><td>自有资金，但受关联交易与资本金限制</td></tr>
+      <tr><td>民间资金</td><td class="num neg">12–24%</td><td>灵活但不可持续，且触及非法集资红线</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">数据来源：联合资信《2026 年汽车金融行业分析》、惠誉博华《汽车租赁 ABN 市场观察》、公开市场发行数据（2025–2026）。</p>
+
+  <p>12–15% 大致相当于信托的中位水平。如果资金方只出钱、不要求额外增信，这个价格可以接受；但如果同时要求车辆抵押、到期回购、10% 保证金、股权质押、实控人连带担保，那实际成本远高于 13.5%，应该压到 8–10%。</p>
+
+  <h3>算一笔真实成本</h3>
+  <p>假设资金方 13.5%、要求 10% 保证金（不计息）、实控人连带担保、到期回购。保证金占用让实际可用资金只有 90%，等效资金成本约 15%；再加上回购条款把尾部风险全部转回公司，这个价格就不划算了。</p>
+
+  <div class="callout soft">
+    <span class="label">谈判要点</span>
+    <p>先谈「有没有追索」。有追索（回购/差额补足）的价格应该比无追索低 3–5 个点。如果对方既要 13.5%，又要回购，还要保证金，那本质是把风险全部留给你、收益全部拿走。这种钱，不如不拿。</p>
+  </div>
+
+  <h3>资金成本降到 8% 意味着什么</h3>
+  <p>同样 30% 首付、24% 对客、36 期，单台净利从 −408 变成 +6,562。也就是说，<strong>融资能力比获客能力更决定这门生意能不能做</strong>。前期没有便宜资金，就应该先做轻资产（助贷/导流），而不是硬上重资产。</p>
+</section>
+
+<!-- ============ 08 ============ -->
+<section id="s8">
+  <h2><span class="num">08</span>风控与收车：真正的护城河</h2>
+  <div class="rule"></div>
+
+  <h3>客群决定了违约率的天花板</h3>
+  <p>这类产品的客群是银行和厂商金融拒掉的客户：征信瑕疵、无社保流水、个体户、网约车司机、下沉市场。行业通过率 85% 以上，而银行拒贷率超过 60%。头部的 90+ 逾期是 1.89%，下沉中小机构实操 5–10%。</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>风险</th><th>表现</th><th>对策</th></tr></thead>
+    <tbody>
+      <tr><td>专业骗租</td><td>伪造材料 → 售后回租 → 过户转卖 → 拆 GPS → 车行销赃。德州案涉 100 余辆车、2,500 万元、14 人落网</td><td>反欺诈模型、多头借贷查询、面签录像、首付来源核查、同址同联系人聚类</td></tr>
+      <tr><td>二押 / 抵押给典当行</td><td>客户把车再押给民间借贷，车被第三方控制</td><td>中登网 + 车管所双登记、登记证书由公司保管、GPS 异常位移预警</td></tr>
+      <tr><td>拆 GPS / 跨省转卖</td><td>车辆失联，收车成功率下降</td><td>北斗 + GPS 双模、暗装第二路、保险第一受益人、异地协查网络</td></tr>
+      <tr><td>营运使用</td><td>车辆性质变为营运，残值腰斩</td><td>合同明确约定用途、里程与轨迹监控、违约加速到期</td></tr>
+      <tr><td>车辆瑕疵</td><td>事故车、泡水车、调表，触发退一赔三</td><td>第三方检测报告（查博士/精真估）、检测报告入合同附件、整备留痕</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>收车：这是最容易坐牢的环节</h3>
+  <p>很多同行告诉你的逻辑是「车在我名下，客户不还钱我直接拖走」。这个逻辑在 2020 年之前或许行得通，现在不行了。</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>判例</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>杭州中院 2024 年案</td><td>认定名为融资租赁实为借款担保，公司自行拖车构成侵权，返还原物并按 250 元/天赔偿使用损失</td></tr>
+      <tr><td>兰州中院 2024 年案</td><td>融资租赁公司与代理公司构成共同侵权、连带赔偿，返还登记证书，赔偿约 3.56 万元</td></tr>
+      <tr><td>上海金融法院 2024 沪 74 民终 191 号</td><td>半夜拖车、车内财物争议，承租人主张擅自拖车违法</td></tr>
+      <tr><td>入库案例 2023-05-1-221-009</td><td>有授权也不免责，夜间秘密拖车构成盗窃（未遂）</td></tr>
+      <tr><td>鱼台县法院 2026 年案</td><td>夜间扣车并以车索费，定寻衅滋事罪，判 1 年 6 个月</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">民法典第 1177 条的自助行为仅限「情况紧迫、公力救济不能」。欠租不属于这种情况。</p>
+
+  <div class="callout soft">
+    <span class="label">合规收车流程</span>
+    <p>协商 → 书面催告 → 公证送达 → 起诉并申请财产保全 → 法院扣押 → 强制执行。GPS 只能用于定位后报警或申请法院扣押，不能用于自行拖车。全程留痕，不得夜间、不得破门、不得扣留车内财物。</p>
+  </div>
+
+  <h3>处置：越快越值钱</h3>
+  <p>行业常用天天拍车 C2B 拍卖：平均成交 5.5 天，服务费 3–5%，竞拍价较个人直卖低 5–10%，但跨区溢价可达 10–15%。司法处置周期超过 1 年，所以多数机构对 M3 以上直接核销，而不是打官司。</p>
+  <p>这意味着：<strong>处置能力必须自建或深度绑定，不能临时找。</strong>一台车晚卖 30 天，残值可能再掉 2–3 个点，直接把单台利润吃掉。</p>
+</section>
+
+<!-- ============ 09 ============ -->
+<section id="s9">
+  <h2><span class="num">09</span>合规清单：做之前先过一遍</h2>
+  <div class="rule"></div>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>事项</th><th>要求</th><th>状态</th></tr></thead>
+    <tbody>
+      <tr><td>营业执照</td><td>经营范围含「汽车销售」，可兼「汽车租赁」</td><td>必办</td></tr>
+      <tr><td>二手车经销备案</td><td>取得执照起 2 个月内，在全国汽车流通信息管理系统备案，商务部门确认</td><td>必办，免费</td></tr>
+      <tr><td>融资租赁公司</td><td>如走直租，需省级地方金融管理部门备案；各地实缴资本门槛 1.7–2 亿元，周期 10–12 个月</td><td>视结构而定</td></tr>
+      <tr><td>中登网登记</td><td>动产融资统一登记公示系统办理融资租赁/所有权保留登记，否则不得对抗善意第三人（民法典第 745 条）</td><td>必办，逐车</td></tr>
+      <tr><td>车管所抵押登记</td><td>与中登网并行办理，双保险</td><td>建议</td></tr>
+      <tr><td>合同明示</td><td>车辆所有权归属、成交价、总价款、综合年化成本、提前还款、违约处置、争议解决</td><td>必办</td></tr>
+      <tr><td>宣传用语</td><td>不得出现「贷款」「零首付」「分期购车」等误导性表述（参照江苏细则）</td><td>必办</td></tr>
+      <tr><td>个人信息</td><td>通讯录、位置、人脸等信息收集需单独同意；不得爆通讯录（个人信息保护法第 10、23 条）</td><td>红线</td></tr>
+      <tr><td>催收行为</td><td>不得暴力、威胁、骚扰、夜间催收；催收非法债务罪（刑法第 293 条之一）</td><td>红线</td></tr>
+      <tr><td>资金来源</td><td>只能向持牌机构或特定合格投资人融资；向不特定公众募资构成非法吸收公众存款</td><td>红线</td></tr>
+      <tr><td>关联交易</td><td>不得自融、不得资金池、不得期限错配</td><td>红线</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <span class="label">三条硬红线</span>
+    <p><strong>一、没有真实车辆或低值高估</strong> → 合同无效，按借贷处理，利率可能被砍到 24% 甚至 4 倍 LPR。<br>
+    <strong>二、夜间秘密拖车</strong> → 可能构成盗窃、寻衅滋事，有授权也不免责。<br>
+    <strong>三、爆通讯录</strong> → 违反个人信息保护法，情节严重构成侵犯公民个人信息罪。</p>
+  </div>
+
+  <h3>如果被认定「名为租赁实为借贷」</h3>
+  <p>融资租赁公司属于七类地方金融组织，依最高法法释〔2020〕27 号批复，不适用民间借贷 4 倍 LPR 上限；但司法实践中多参照年利率 24% 调减。海口案的 23.42% 被降到 14.2%，就是典型。</p>
+  <p>应对方式：合同里明确约定年利率标准，并加入「若被认定为借贷时适用的利率」条款；同时保留真实过户、真实成交价、真实整备成本的证据链。</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10">
+  <h2><span class="num">10</span>落地方案：先验证，再投钱</h2>
+  <div class="rule"></div>
+  <p>不建议按原结构直接起盘。建议分三个阶段，每一阶段都有明确的「继续/停止」门槛。</p>
+
+  <div class="phase">
+    <div class="when">阶段 0<br>0–2 个月<br>投入 &lt; 50 万</div>
+    <div class="body">
+      <h4>用别人的钱验证需求，不碰信用风险</h4>
+      <p>先做助贷/导流：把客户导给持牌机构或现有融资租赁公司，收 2–3% 服务费，不承担违约。目标跑满 50 单。</p>
+      <p>同时办二手车经销备案，搭好合同模板、检测流程、GPS 与保险方案。</p>
+      <p>要测出四个数：获客成本（CPA）、审批通过率、M1/M3 逾期率、收车成功率。这四个数决定后面能不能放量。</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="when">阶段 1<br>3–9 个月<br>1,000–2,000 万</div>
+    <div class="body">
+      <h4>小规模自营，把模型跑通</h4>
+      <p>用自有资金加 1 家资金方，走「经销 + 分期 + 所有权保留」结构。产品：油车、8–15 万、3–6 年车龄、首付 30%、24–36 期、对客综合年化不超过 24%。</p>
+      <p>规模控制在 200–300 台，重点不是赚钱，是验证三个能力：能不能稳定收到车、能不能 30 天内处置掉、单台净利能不能站上 5,000 元。</p>
+      <p>同步建立处置通道：与天天拍车、本地 2–3 家车商签长期协议，确保收回来的车有出口。</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="when">阶段 2<br>9–24 个月<br>按数据决定</div>
+    <div class="body">
+      <h4>数据达标才放量，同时解决资金成本</h4>
+      <p>如果阶段 1 的三个能力都跑通，再考虑放量到 1,000 台/年。放量的前提是资金成本降到 10% 以下——否则规模越大，亏得越多。</p>
+      <p>降成本的路径有两条：一是引入银行助贷或信托，二是做出 12 个月以上的资产池后发 ABS。ABS 优先级可以到 2% 左右，但需要主体评级和资产分散度。</p>
+      <p>融资租赁牌照在这个阶段再评估。如果业务量足够、需要更低的资金成本，再申请；不要为了一个外壳先压 1.7 亿实缴资本。</p>
+    </div>
+  </div>
+
+  <h3>Go / No-Go 门槛</h3>
+  <div class="scroll">
+  <table class="gate">
+    <thead><tr><th>指标</th><th class="num">继续</th><th class="num">观察</th><th class="num">停止</th></tr></thead>
+    <tbody>
+      <tr><td>50 单样本 M3 逾期率</td><td class="num pos">≤ 3%</td><td class="num">3–5%</td><td class="num neg">&gt; 5%</td></tr>
+      <tr><td>收车成功率</td><td class="num pos">≥ 70%</td><td class="num">50–70%</td><td class="num neg">&lt; 50%</td></tr>
+      <tr><td>单台净利</td><td class="num pos">≥ 5,000 元</td><td class="num">2,000–5,000</td><td class="num neg">&lt; 2,000</td></tr>
+      <tr><td>资金成本</td><td class="num pos">≤ 10%</td><td class="num">10–13%</td><td class="num neg">&gt; 13%</td></tr>
+      <tr><td>处置周期</td><td class="num pos">≤ 30 天</td><td class="num">30–45 天</td><td class="num neg">&gt; 45 天</td></tr>
+      <tr><td>获客成本</td><td class="num pos">≤ 3,000 元</td><td class="num">3,000–5,000</td><td class="num neg">&gt; 5,000</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>组织与预算</h3>
+  <p>阶段 1 最小团队 12–15 人：销售 4、风控审批 2、贷后与收车 3、处置 1、财务 1、法务 1（可外聘）、运营 1。门店选在宏盟或双流市场周边，租金控制在月 3 万以内。系统先用 SaaS，不要自研。</p>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11">
+  <h2><span class="num">11</span>财务预测：三档规模</h2>
+  <div class="rule"></div>
+  <p>按基准单台净利 9,373 元、车价 10 万测算。稳态指三个年度批次同时在租。</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>档位</th><th class="num">年投放</th><th class="num">在租规模</th><th class="num">年净利</th><th class="num">自有资金需求</th><th class="num">ROE</th></tr></thead>
+    <tbody>
+      <tr><td>验证期</td><td class="num">300 台 / 3,000 万</td><td class="num">900 台 / 9,000 万</td><td class="num">250 万</td><td class="num">1,500 万</td><td class="num">17%</td></tr>
+      <tr><td>成长期</td><td class="num">1,000 台 / 1 亿</td><td class="num">3,000 台 / 3 亿</td><td class="num">937 万</td><td class="num">4,000 万</td><td class="num">23%</td></tr>
+      <tr><td>规模化</td><td class="num">3,000 台 / 3 亿</td><td class="num">9,000 台 / 9 亿</td><td class="num">2,812 万</td><td class="num">1.2 亿</td><td class="num">23%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">自有资金需求 = 保证金 10% + 运营垫资 + 库存备货。假设资金方全额垫付车价，客户首付覆盖保证金。验证期单台净利按 8,300 元计（固定成本摊薄不足），成长期与规模化按 9,370 元计。ROE 是模型口径，规模越大越接近 23%，前提是资金成本不变——这也是为什么放量必须先降资金成本。</p>
+
+  <h3>三档规模的单台净利对比</h3>
+  <div class="scen">
+    <div class="scen-row"><span>基准 · 油车</span><div class="scen-track"><div class="scen-fill" style="width:93%"></div></div><span class="scen-val">9,339</span></div>
+    <div class="scen-row"><span>基准 · 电车</span><div class="scen-track"><div class="scen-fill" style="width:80%"></div></div><span class="scen-val">7,998</span></div>
+    <div class="scen-row"><span>车价再跌 15%</span><div class="scen-track"><div class="scen-fill" style="width:89%"></div></div><span class="scen-val">8,911</span></div>
+    <div class="scen-row"><span>违约 15% + 三成收不回</span><div class="scen-track"><div class="scen-fill" style="width:68%"></div></div><span class="scen-val">6,808</span></div>
+    <div class="scen-row"><span>全面压力 · 电车</span><div class="scen-track"><div class="scen-fill" style="width:37%"></div></div><span class="scen-val">3,702</span></div>
+    <div class="scen-row"><span>直租结构 · 税改后</span><div class="scen-track"><div class="scen-fill neg" style="width:6%"></div></div><span class="scen-val">−648</span></div>
+  </div>
+  <p class="cap">压力情形：违约率上调、30% 车辆无法收回、残值再跌 15%、回收折价到 70%、空转 6 个月。</p>
+
+  <div class="callout soft">
+    <span class="label">这张表说明什么</span>
+    <p>即使把违约、残值、回收全部打到最坏，经销分期结构仍然是正利润。真正会把生意打穿的不是违约率，而是三件事：税务结构选错、资金成本过高、车价系统性崩塌导致处置无门。前两个可控，第三个不可控——所以规模和杠杆要留余量。</p>
+  </div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12">
+  <h2><span class="num">12</span>风险清单与止损线</h2>
+  <div class="rule"></div>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>风险</th><th>触发信号</th><th>影响</th><th>止损动作</th></tr></thead>
+    <tbody>
+      <tr><td>税务定性风险</td><td>被认定经销不实、0.5% 被追缴</td><td class="neg">单台税负增加 13,000 元以上</td><td>真实过户、真实成交价、完整证据链；预留税务准备金</td></tr>
+      <tr><td>司法定性风险</td><td>合同被认定名为买卖实为借贷</td><td class="neg">利率被调减至 24% 或 4 倍 LPR</td><td>合同条款预设适用利率；避免低值高估</td></tr>
+      <tr><td>收车刑事风险</td><td>夜间拖车、破门、扣财物</td><td class="neg">侵权赔偿，甚至刑责</td><td>只走协商—公证—诉讼—执行；GPS 仅用于报警</td></tr>
+      <tr><td>车辆残值崩塌</td><td>月度车价跌幅超 3%，或同款新车降价超 10%</td><td class="neg">处置价低于资金方余额</td><td>降杠杆、缩期限、停收该车型</td></tr>
+      <tr><td>骗租团伙</td><td>同址、同联系人、同设备指纹集中出现</td><td class="neg">单案可损失数十台</td><td>反欺诈规则、面签录像、首付来源核查</td></tr>
+      <tr><td>资金方抽贷</td><td>要求追加保证金或提前回购</td><td class="neg">现金流断裂</td><td>保留 3 个月运营现金；不把单一资金方占比做超 50%</td></tr>
+      <tr><td>规模不经济</td><td>单台运营成本随规模上升</td><td class="neg">净利被吃掉</td><td>按月监控「单台运营成本」，超 13% 停止扩张</td></tr>
+      <tr><td>政策变化</td><td>0.5% 征收率到期不续、助贷新规收紧</td><td class="neg">模型失效</td><td>每年做一次政策压力测试；不签超过 3 年的刚性承诺</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>三条不能碰的线</h3>
+  <ul class="plain">
+    <li><strong>不向不特定公众募资。</strong>不管包装成「车辆认购」「收益权转让」还是「合伙购车」，只要面向不特定对象承诺固定回报，就是非法吸收公众存款。</li>
+    <li><strong>不做资金池和期限错配。</strong>用 3 个月的钱做 36 个月资产，一次抽贷就死。</li>
+    <li><strong>不碰自融和关联交易。</strong>资金方、车商、客户任何一端有关联关系，都会被认定为自融。</li>
+  </ul>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13">
+  <h2><span class="num">13</span>决策建议</h2>
+  <div class="rule"></div>
+
+  <p><strong>这个模式能做，但不能按朋友说的那个版本做。</strong>三处必须改：</p>
+
+  <ol class="steps">
+    <li><strong>把「融资租赁直租」换成「二手车经销 + 分期 + 所有权保留」。</strong>法律效果一样，税负从车价的 14.3% 降到 0.75%。这一条不改，做多少亏多少。</li>
+    <li><strong>把资金成本从 13.5% 压到 10% 以下，再谈规模。</strong>13.5% 的资金只能支撑 30% 的对客定价，而 30% 恰好是司法和监管最敏感的位置。先解决钱，再解决量。</li>
+    <li><strong>把「收车」当成核心能力建，而不是当成合同权利。</strong>真正的壁垒是 30 天内把车变成现金，不是一纸授权。没有处置能力，所有风控都是纸面的。</li>
+  </ol>
+
+  <h3>三个月的行动清单</h3>
+  <div class="scroll">
+  <table>
+    <thead><tr><th style="width:70px">周</th><th>动作</th><th>产出</th></tr></thead>
+    <tbody>
+      <tr><td class="wk">1–2</td><td>找 3 家成都车商谈合作，摸清收车价与批发价差</td><td>车型白名单与真实毛利表</td></tr>
+      <tr><td class="wk">3–4</td><td>找 2 家持牌机构谈助贷导流，确认服务费与准入</td><td>轻资产跑通路径</td></tr>
+      <tr><td class="wk">5–6</td><td>办营业执照与二手车经销备案，搭合同模板</td><td>合规主体</td></tr>
+      <tr><td class="wk">7–10</td><td>跑 50 单助贷，记录获客成本、通过率、逾期</td><td>四个核心数据</td></tr>
+      <tr><td class="wk">11–12</td><td>按 Go/No-Go 门槛复盘，决定是否进入自营</td><td>投或不投的决策</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout soft">
+    <span class="label">一句话</span>
+    <p>这不是一门「用 13.5% 的钱赚 30%」的生意，是一门「用便宜的钱、卖贵的车、快速处置坏账」的生意。前者靠胆子，后者靠系统。朋友给你的是前者，能活下来的是后者。</p>
+  </div>
+</section>
+
+<footer>
+  <p>本备忘基于 2025–2026 年公开数据与自建现金流模型测算，不构成投资建议。税务与监管口径请以主管机关和执业律师、税务师的书面意见为准。</p>
+  <p style="margin-top:14px">主要资料来源</p>
+  <div class="srcs">
+    <div>中国汽车流通协会 cada.cn（2025–2026）</div>
+    <div>财政部 海关总署 税务总局公告 2025 年第 10 号</div>
+    <div>财政部 税务总局公告 2023 年第 63 号（二手车经销 0.5%）</div>
+    <div>最高人民法院法释〔2020〕27 号批复</div>
+    <div>《民法典》第 634、641–643、735、745、1177、1209 条</div>
+    <div>联合资信《2026 年汽车金融行业分析》</div>
+    <div>惠誉博华《汽车租赁 ABN 市场观察》</div>
+    <div>易鑫集团 2025 年度报告</div>
+    <div>KPMG《资产融资和租赁税务观察》2025 Q4</div>
+    <div>中国汽车流通协会 / 精真估保值率报告（2025–2026）</div>
+    <div>成都市政府、四川省政府网站（2026）</div>
+    <div>杭州中院、兰州中院、上海金融法院相关判例（2024）</div>
+  </div>
+</footer>
+
+</main>
+</div>
+</div>
